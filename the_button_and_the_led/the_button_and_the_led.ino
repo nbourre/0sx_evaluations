@@ -1,5 +1,7 @@
 #include <OneButton.h>
 
+#pragma region Définitions
+
 enum AppState {OFF, PULSE, BLINK};
 
 AppState appState = OFF;
@@ -18,6 +20,10 @@ int blinkRate = 1000;
 int pulseRate = 2;
 
 OneButton button(BTN_PIN);
+
+#pragma endregion
+
+#pragma region Helpers
 
 // Cette fonction est appelée AUTOMATIQUEMENT
 // lorsqu'il y a des données reçues via
@@ -38,6 +44,9 @@ void serialEvent() {
   }
 }
 
+#pragma endregion
+
+#pragma region États
 
 void stopState() {
 
@@ -76,9 +85,13 @@ void pulseState() {
  
 }
 
+#pragma endregion
+
+#pragma region Tâches
+
 // Fonction pour la gestion des commandes 
 // reçues du port série
-void commandeTask() {
+void commandTask() {
   // Aucune commande de reçu
   if (!stringRecue) return;
 
@@ -115,6 +128,9 @@ void commandeTask() {
   }
 }
 
+#pragma endregion
+
+#pragma region Gestion du bouton
 
 // Gestion du clic du bouton
 void btnClick() {
@@ -148,6 +164,9 @@ void btnLongPressStart() {
   }
 }
 
+#pragma endregion
+
+#pragma region setup - loop
 void setup() {
   Serial.begin(9600);
 
@@ -181,17 +200,57 @@ void loop() {
   button.tick();
 }
 
+#pragma endregion
+
+#pragma region Modèles
+
 // Copier-coller cette fonction pour faire
-// une tâche ou etat au lieu de retaper le code 
+// un etat au lieu de retaper le code 
 // similaire à chaque fois
-void modelTask() {
+void modelState() {
   static unsigned long lastTime = 0;
+  static bool firstTime = true;
+  
+  // Variables pour les transitions
+  // Ajouter d'autres au besoin
+  bool transitionA = false;
+
   int rate = 250; // Adapter à la convenance
+
+  if (firstTime) {
+    firstTime = false;
+  }
 
   if (currentTime - lastTime < rate) return;
 
   lastTime = currentTime;
 
   // Ajouter le code ici
+
+
+  // Vérification des transitions
+  transitionA = false; // Changer pour la bonne condition
+
+  if (transitionA) {
+    firstTime = true;
+
+    // [Mettre à zéro]
+
+    // [Changer d'état]
+  }
 }
 
+// Modèle de tâche de base
+void modelTask() {
+  static unsigned long lastTime = 0;
+  const int rate = 250; // Adapter à la convenance
+
+  if (currentTime - lastTime < rate) return;
+
+  lastTime = currentTime;
+
+  // Ajouter le code ici
+
+}
+
+#pragma endregion
