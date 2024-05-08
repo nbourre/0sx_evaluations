@@ -23,25 +23,38 @@ OneButton button(BTN_PIN);
 
 #pragma endregion
 
-#pragma region Helpers
+#pragma region setup - loop
+void setup() {
+  Serial.begin(9600);
 
-// Cette fonction est appelée AUTOMATIQUEMENT
-// lorsqu'il y a des données reçues via
-// le port série.
-void serialEvent() {
-  static char inChar = '\0';
+  pinMode (LED_PIN, OUTPUT);
+  pinMode (LED_PIN, OUTPUT);
+  pinMode (BTN_PIN, INPUT_PULLUP);
 
-  while (Serial.available()) {
-    // get the new byte:
-    inChar = (char)Serial.read();
-    // add it to the inputString:
-    serialInput += inChar;
-    // Après la lecture d'une nouvelle ligne, lever le drapeau pour que
-    // le programme principal fasse de quoi avec
-    if (inChar == '\n') {
-      stringRecue = true;
-    }
+  button.attachClick(btnClick);
+  button.attachLongPressStart(btnLongPressStart);
+  
+  Serial.println("Setup done!");
+}
+
+void loop() {
+  currentTime = millis();
+
+  commandeTask();
+
+  switch (appState) {
+    case OFF:
+      stopState();
+      break;
+    case PULSE:
+      pulseState();
+      break;
+    case BLINK:
+      blinkState();
+      break;
   }
+
+  button.tick();
 }
 
 #pragma endregion
@@ -166,38 +179,25 @@ void btnLongPressStart() {
 
 #pragma endregion
 
-#pragma region setup - loop
-void setup() {
-  Serial.begin(9600);
+#pragma region Helpers
 
-  pinMode (LED_PIN, OUTPUT);
-  pinMode (LED_PIN, OUTPUT);
-  pinMode (BTN_PIN, INPUT_PULLUP);
+// Cette fonction est appelée AUTOMATIQUEMENT
+// lorsqu'il y a des données reçues via
+// le port série.
+void serialEvent() {
+  static char inChar = '\0';
 
-  button.attachClick(btnClick);
-  button.attachLongPressStart(btnLongPressStart);
-  
-  Serial.println("Setup done!");
-}
-
-void loop() {
-  currentTime = millis();
-
-  commandeTask();
-
-  switch (appState) {
-    case OFF:
-      stopState();
-      break;
-    case PULSE:
-      pulseState();
-      break;
-    case BLINK:
-      blinkState();
-      break;
+  while (Serial.available()) {
+    // get the new byte:
+    inChar = (char)Serial.read();
+    // add it to the inputString:
+    serialInput += inChar;
+    // Après la lecture d'une nouvelle ligne, lever le drapeau pour que
+    // le programme principal fasse de quoi avec
+    if (inChar == '\n') {
+      stringRecue = true;
+    }
   }
-
-  button.tick();
 }
 
 #pragma endregion
